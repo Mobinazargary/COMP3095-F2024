@@ -1,7 +1,7 @@
 #-----------------
 # Build Stage
 #-----------------
-FROM gradle:8-jdk23-alpine AS builder
+FROM gradle:8-jdk22-alpine AS builder
 
 # Copy the project files into the container
 COPY --chown=gradle:gradle . /home/gradle/src
@@ -15,7 +15,7 @@ RUN gradle build -x test
 #------------------
 # Package Stage
 #------------------
-FROM openjdk:23-jdk
+FROM openjdk:22-jdk
 
 # Create the app directory in the container
 RUN mkdir /app

@@ -46,7 +46,7 @@ services:
     build:
       context: ./api-gateway  # Path to the api-gateway folder containing the Dockerfile
     ports:
-      - "9001:9000"
+      - "9002:9000"
     depends_on:
       - order-service
       - product-service
@@ -61,7 +61,7 @@ services:
       context: ./product-service
       dockerfile: Dockerfile
     ports:
-      - "8083:8086"
+      - "8082:8086"
     environment:
       SPRING_PROFILES_ACTIVE: docker
     depends_on:
@@ -76,7 +76,7 @@ services:
       context: ./order-service
       dockerfile: Dockerfile
     ports:
-      - "8068:8087"
+      - "8087:8087"
     environment:
       SPRING_PROFILES_ACTIVE: docker
     depends_on:
@@ -90,7 +90,7 @@ services:
       context: ./inventory-service
       dockerfile: Dockerfile
     ports:
-      - "8058:8088"
+      - "8088:8088"
     environment:
       SPRING_PROFILES_ACTIVE: docker
     depends_on:

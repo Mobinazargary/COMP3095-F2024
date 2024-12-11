@@ -27,8 +27,11 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     implementation("org.springframework.boot:spring-boot-starter-web")
+
+    //WEEK 11 lab
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.6.0")
+    testImplementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.6.0")
+
     compileOnly("org.projectlombok:lombok")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     annotationProcessor("org.projectlombok:lombok")
@@ -40,7 +43,9 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
-
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+tasks.withType<org.springframework.boot.gradle.tasks.bundling.BootJar> {
+    mainClass.set("ca.gbc.productservice.ProductServiceApplication") // Adjust this to your actual main class
 }

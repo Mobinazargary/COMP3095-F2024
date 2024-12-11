@@ -1,0 +1,71 @@
+services:
+  zookeeper:
+    container_name: zookeeper
+    hostname: zookeeper
+    image: confluentinc/cp-zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    volumes:
+      - zookeeper_data:/var/lib/zookeeper/data
+      - zookeeper_log:/var/lib/zookeeper/log
+    networks:
+      - spring
+
+  broker:
+    container_name: broker
+    image: confluentinc/cp-kafka:7.5.0
+    ports:
+      # External connections (outside docker) use 9092 and localhost
+      - "9092:9092"
+      # Internal Connections (inside docker) and the container hostname (broker)
+      - "29092:29092"
+    environment:
+      # Unique identifier for the Kafka broker
+      KAFKA_BROKER_ID: 1
+      # Zookeeper connection string (hostname and port)
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      # Map of listener names to security protocols
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      # List of listeners and their addresses for external and internal communication
+      # Internal (Docker network): broker:29092
+      # External (Host machine): localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092
+      # Listeners to bind to the network interfaces
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092
+      # Replication factor for internal Kafka topics
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      # Ensure Zookeeper is up before starting Kafka
+      - zookeeper
+    networks:
+      # Use the spring network for inter-container communication
+      - spring
+
+
+
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      # he put 8086 cause that was his next available port but my next available is 8089
+      - "8089:8080"
+    environment:
+      KAFKA_CLUSTERS_NAME: local
+      KAFKA_CLUSTERS_BOOTSTRAPSERVERS: broker:9092
+      DYNAMIC_CONFIG_ENABLED: 'true'
+    depends_on:
+      - broker
+    networks:
+      - spring
+
+networks:
+  spring:
+    driver: bridge
+
+volumes:
+  zookeeper_data:
+  zookeeper_log:
+  kafka_broker_data:

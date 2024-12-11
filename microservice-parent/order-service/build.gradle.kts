@@ -13,62 +13,58 @@ java {
     }
 }
 
+configurations {
+    compileOnly {
+        extendsFrom(configurations.annotationProcessor.get())
+    }
+}
+
 repositories {
     mavenCentral()
 }
 
+
+// WEEK 10
 dependencyManagement {
     imports {
-        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2023.0.3")
+        mavenBom ( "org.springframework.cloud:spring-cloud-dependencies:2023.0.3")
     }
 }
 
+
 dependencies {
-    // Spring Boot Starters
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-validation")
-
-    // REST Client Dependencies (Spring Declarative REST Client)
-    implementation("org.springframework:spring-web")
-    implementation("org.springframework.boot:spring-boot-starter-webflux")
-
-    // OpenFeign (for REST Client if needed)
-    implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
-
-    // Flyway Database Migrations
     implementation("org.flywaydb:flyway-core")
     implementation("org.flywaydb:flyway-database-postgresql")
+    // WEEK 10 DEPENDENCIES
+    //implementation ("org.springframework.cloud:spring-cloud-starter-openfeign")
+    implementation("org.springframework.cloud:spring-cloud-starter-contract-stub-runner")
 
-    // API Documentation (SpringDoc OpenAPI)
+
+    //WEEK 13 LECTURE
+    implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j:3.1.2")
+
+    //WEEK 13 LAB
+    implementation("org.springframework.kafka:spring-kafka:3.3.0")
+    testImplementation("org.springframework.kafka:spring-kafka-test:3.3.0")
+    testImplementation("org.testcontainers:kafka:1.20.4")
+
+
+    //WEEK 11 lab
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.6.0")
+    testImplementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.6.0")
 
-    // PostgreSQL Driver
-    runtimeOnly("org.postgresql:postgresql")
-
-    // Lombok for Simplified Code
     compileOnly("org.projectlombok:lombok")
-    annotationProcessor("org.projectlombok:lombok")
-
-    // Development-Only Tools
     developmentOnly("org.springframework.boot:spring-boot-devtools")
-
-    // Testing Dependencies
+    runtimeOnly("org.postgresql:postgresql")
+    annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-
+    testImplementation("io.rest-assured:rest-assured")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:postgresql")
-    testImplementation("io.rest-assured:rest-assured")
-    testImplementation("com.github.tomakehurst:wiremock-jre8:2.35.0")
-    testImplementation("com.h2database:h2")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.springframework.boot:spring-boot-testcontainers")
-    testImplementation("io.rest-assured:rest-assured")
-
-    // JUnit Platform for Test Runtime
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
@@ -76,3 +72,6 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
+tasks.withType<org.springframework.boot.gradle.tasks.bundling.BootJar> {
+    mainClass.set("ca.gbc.orderservice.OrderServiceApplication") // Adjust this to match the fully qualified name of your main class
+}
